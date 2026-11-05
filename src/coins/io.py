@@ -21,7 +21,7 @@ def load_rgb(path) -> np.ndarray:
 
 
 def show_images(images, titles=None, cmap="gray", cols=None, size=5):
-    """Zobrazí několik snímků vedle sebe (šedotónové s danou colormapou)."""
+    # zobrazí několik snímků vedle sebe (šedotónové s danou colormapou).
     n = len(images)
     cols = cols or n
     rows = int(np.ceil(n / cols))
