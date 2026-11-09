@@ -6,7 +6,8 @@ Autoři: Jakub Procházka (xproch40), Jan Kostrhun.
 ## Cíl
 
 Aplikace z kamery nad podložkou rozpozná české mince (1, 2, 5, 10, 20, 50 Kč),
-u každé zobrazí hodnotu a v rohu obrazu jejich součet. Ostatní předměty a cizí mince zahodí.
+u každé zobrazí hodnotu a v rohu obrazu jejich součet. Úspěšnost hodnotíme pomocí ROC křivek a EER pro každou hodnotu mince.
+Vyřazování cizích předmětů (euro, prstýnek…) je volitelné rozšíření. Podrobně viz `ZADANI_projekt_pocitani_minci.md`.
 
 ## Hlavní vylepšení: stabilní živý součet
 
