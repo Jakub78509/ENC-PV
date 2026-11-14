@@ -14,3 +14,9 @@ Krátký záznam po každém týdnu: co jsme udělali, co nefungovalo a proč.
 
 - Zadání schváleno. Vyřazování cizích předmětů jen jako volitelné rozšíření, pokud zbude čas.
 - Akceptační kritéria přepsána na ROC křivky a EER pro každou hodnotu mince (+ matice záměn).
+- Nové fotky 3–5.jpg s dotýkajícími se mincemi (převedeny z HEIC, originály v `data/raw/`).
+- Notebook `04_watershed_hough`: distance transform → lokální maxima jako markery → watershed. Výsledek 11/11, 2/2, 13/13, 4/4, 13/13.
+- Hough je citlivý na `param2` (5.jpg: 31/21/14 kruhů místo 13) a potřebuje rozsah poloměrů → hlavní metoda watershed.
+- Oprava kroku 03: uzavření 1× a vyplňují se jen malé díry, jinak se slily mince natěsno.
+- Fotky jsou focené z různé výšky (50 Kč má r = 58–88 px) → pro krok 05 nutná kalibrace px → mm.
+
