@@ -10,6 +10,7 @@ import numpy as np
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 SAMPLE_DIR = PROJECT_ROOT / "data" / "sample"
 RAW_DIR = PROJECT_ROOT / "data" / "raw"
+DATASET_DIR = PROJECT_ROOT / "data" / "dataset"
 
 
 def load_rgb(path) -> np.ndarray:

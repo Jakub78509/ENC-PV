@@ -19,6 +19,7 @@ Líc = strana se lvem a nápisem ČESKÁ REPUBLIKA, rub = strana s hodnotou a mo
 
 **Soubory:**
 - `anotace.csv` – pro každou fotku počet mincí podle hodnot, celkový počet a součet v Kč.
+- `anotace_mince.csv` – poloha (x, y, poloměr v px) a hodnota každé mince; ručně ověřeno.
 - `puvodni_nazvy.csv` – převod na původní názvy z iPhonu (`IMG_xxxx.JPG`).
 
 **Poznámky:**

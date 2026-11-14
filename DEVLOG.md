@@ -20,3 +20,18 @@ Krátký záznam po každém týdnu: co jsme udělali, co nefungovalo a proč.
 - Oprava kroku 03: uzavření 1× a vyplňují se jen malé díry, jinak se slily mince natěsno.
 - Fotky jsou focené z různé výšky (50 Kč má r = 58–88 px) → pro krok 05 nutná kalibrace px → mm.
 
+
+## Týden 2 (9.–15. 11. 2026)
+
+- Nafocen vlastní dataset (14. 11.): iPhone 1,5×, 30 cm nad podložkou, pravítko v záběru. 88 fotek ve složkách
+  `samostatne`, `mix`, `dotyk`, `test`, `robust`; v gitu zmenšené na 1428 px (`data/dataset/`), originály na Drive.
+- Anotace: `anotace.csv` (počty podle hodnot, součet) a `anotace_mince.csv` (poloha a hodnota každé z 683 mincí).
+- Notebook `05_priznaky_klasifikace`:
+  - Stará segmentace na šedé podložce vynechávala tmavé lesklé 1 a 2 Kč (460/476). Nově odečtení pozadí
+    (mediánový filtr s velkým jádrem), maska pravítka podle červené barvy a kruhovitost na konvexním obalu → 476/476.
+  - Kalibrace 4,876 px/mm podle mincí známého průměru (pravítko je v záběru oříznuté). Průměr = menší osa proložené
+    elipsy; opsaná kružnice u dotýkajících se mincí vycházela o 0,5 mm větší.
+  - Klasifikátor podle nejbližšího souseda se skóre pro každou třídu (−vzdálenost). Na validaci vybrány příznaky
+    průměr + sytost uprostřed; odstín výsledek zhoršil (u stříbrných mincí šum).
+  - Test: 99,4 % mincí správně, přesný součet na 15/16 snímků (93,8 %). Chyba = dvě slité mince v detekci.
+  - Boční světlo (`robust/`): jen 74 % mincí a 1/6 součtů – sytost i okraj masky se světlem mění. Hlavní slabina.
