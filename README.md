@@ -42,7 +42,8 @@ počet falešných změn součtu a doba reakce.
 ```
 notebooks/    jednotlivé kroky řešení
 src/coins/    sdílené funkce (načítání, segmentace, příznaky, klasifikace)
-data/raw/     vlastní fotky (není v gitu)
+data/dataset/ vlastní dataset zmenšený na 1428 px + anotace (v gitu)
+data/raw/     originály fotek v plném rozlišení (není v gitu, na Drive)
 data/sample/  pár ukázkových fotek (v gitu)
 results/      grafy a výsledky evaluace
 DEVLOG.md     týdenní záznam práce
