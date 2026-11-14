@@ -35,3 +35,10 @@ Krátký záznam po každém týdnu: co jsme udělali, co nefungovalo a proč.
     průměr + sytost uprostřed; odstín výsledek zhoršil (u stříbrných mincí šum).
   - Test: 99,4 % mincí správně, přesný součet na 15/16 snímků (93,8 %). Chyba = dvě slité mince v detekci.
   - Boční světlo (`robust/`): jen 74 % mincí a 1/6 součtů – sytost i okraj masky se světlem mění. Hlavní slabina.
+- Notebook `06_evaluace_mlp`: ROC, EER a AUC pro každou hodnotu (jedna proti ostatním), srovnání kNN, perceptronu a MLP.
+  - Validace (`dotyk/`) je nasycená: kNN i všechny MLP 100 %. Vybrána nejmenší síť (8 neuronů, α = 0,01).
+  - Perceptron nestačí (93 %, AUC 0,82): hodnoty uprostřed osy průměru nejdou oddělit jednou přímkou.
+  - Test: kNN 99,4 % mincí, součty 93,8 %, ale EER 1 Kč 9,3 % a 2 Kč 7,1 % (> 5 %). MLP splní EER i AUC
+    (průměr 1,4 %, max 4,1 %, AUC ≥ 0,996), ale součty jen 81 %. Žádný model nesplní všechna kritéria najednou.
+  - Příčina: v testu jsou zašlé „růžové“ 1 Kč (sytost 67–84, v trénovacích datech max 59). Validace z týchž kusů
+    mincí to neodhalila → dofotit více kusů 1 a 2 Kč, validaci dělat z jiných kusů než trénink.
