@@ -79,3 +79,28 @@ def features_table(images, detections, px_per_mm, truth=None):
                 row["hodnota"] = value
             rows.append(row)
     return pd.DataFrame(rows)
+
+
+def frame_features(img_rgb, coins, px_per_mm):
+    """Stejné příznaky jako coin_features, ale rychleji pro živý obraz.
+
+    HSV se převádí jednou za snímek a masky středu a mezikruží se kreslí jen do výřezu kolem mince.
+    """
+    hsv = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2HSV)
+    h, w = hsv.shape[:2]
+    rows = []
+    for coin in coins:
+        cx, cy, r = int(round(coin["x"])), int(round(coin["y"])), coin["r"]
+        x0, y0 = max(cx - int(r) - 2, 0), max(cy - int(r) - 2, 0)
+        x1, y1 = min(cx + int(r) + 3, w), min(cy + int(r) + 3, h)
+        roi = hsv[y0:y1, x0:x1]
+        center = _ring_mask(roi.shape[:2], cx - x0, cy - y0, r, 0, 0.5)
+        ring = _ring_mask(roi.shape[:2], cx - x0, cy - y0, r, 0.72, 0.92)
+        rows.append({
+            "prumer_mm": diameter_px(coin) / px_per_mm,
+            "S_stred": roi[..., 1][center].mean(),
+            "H_stred": roi[..., 0][center].mean(),
+            "S_okraj": roi[..., 1][ring].mean(),
+            "H_okraj": roi[..., 0][ring].mean(),
+        })
+    return pd.DataFrame(rows, columns=FEATURES)

@@ -15,3 +15,7 @@ data/*.zip
 .DS_Store
 .idea/
 .vscode/
+
+# Videa z kamery (velká)
+*.mp4
+*.mov

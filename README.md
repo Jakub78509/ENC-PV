@@ -58,3 +58,13 @@ pip install -r requirements.txt
 nbstripout --install        # maže výstupy notebooků před commitem
 jupyter lab
 ```
+
+## Živý režim
+
+```bash
+python live.py --list          # najde kamery (iPhone přes Continuity Camera)
+python live.py --source 1      # číslo kamery z --list
+```
+
+Na podložku dát jen desetikoruny a stisknout **k** (kalibrace px/mm, uloží se do `kalibrace.json`),
+**s** uloží snímek, **q** konec. `--log soubor.csv` a `--record soubor.mp4` uloží součty a video.

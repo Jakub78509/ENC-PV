@@ -42,3 +42,14 @@ Krátký záznam po každém týdnu: co jsme udělali, co nefungovalo a proč.
     (průměr 1,4 %, max 4,1 %, AUC ≥ 0,996), ale součty jen 81 %. Žádný model nesplní všechna kritéria najednou.
   - Příčina: v testu jsou zašlé „růžové“ 1 Kč (sytost 67–84, v trénovacích datech max 59). Validace z týchž kusů
     mincí to neodhalila → dofotit více kusů 1 a 2 Kč, validaci dělat z jiných kusů než trénink.
+
+## Týden 3 (16.–22. 11. 2026)
+
+- Vyučující povolil iPhone jako kameru (Continuity Camera).
+- Notebook `07_live_kamera` a skript `live.py`: obraz z kamery → detekce → kNN → hodnota u mince a součet v rohu.
+  Snímek se přeškáluje na měřítko datasetu (4,876 px/mm), kalibrace klávesou k z mincí jedné hodnoty.
+- Příznaky jednou za snímek a jen ve výřezu kolem mince (`frame_features`): 200 ms → 3 ms. Celý snímek ~80 ms (~12 fps).
+- Stabilní součet (`src/coins/stabilize.py`): sledování mincí, hlasování o hodnotě, hystereze 3/3 snímky, medián z 5,
+  zmrazení při pohybu. Simulace (mince → ruka → odebraná 50 Kč): surový součet se změní 15×, stabilní 2×, reakce 0,8 s.
+- Další krok: ověřit na reálném videu z iPhonu (`--log`), případně přeučit na snímcích z videa.
+
