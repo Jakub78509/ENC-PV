@@ -7,21 +7,31 @@ import numpy as np
 
 
 class Track:
-    def __init__(self, track_id, coin):
+    def __init__(self, track_id, coin, classify=None):
         self.id = track_id
+        self.classify = classify
+        self.features = deque([coin["features"]], maxlen=15) if "features" in coin else None
         self.x, self.y, self.r = coin["x"], coin["y"], coin["r"]
-        self.votes = deque([coin["value"]], maxlen=15)
+        self.d = coin.get("diameter_mm", 0.0)
+        self.votes = deque([coin["value"]], maxlen=9)
         self.hits = 1
         self.misses = 0
         self.confirmed = False
 
     @property
     def value(self):
+        # s klasifikátorem: hodnota z příznaků zprůměrovaných přes snímky (šum se vyruší),
+        # jinak hlasování z hodnot jednotlivých snímků
+        if self.classify is not None and self.features:
+            return self.classify(np.mean(self.features, axis=0))
         return Counter(self.votes).most_common(1)[0][0]
 
     def update(self, coin):
         self.x, self.y, self.r = coin["x"], coin["y"], coin["r"]
+        self.d = 0.7 * self.d + 0.3 * coin.get("diameter_mm", self.d)
         self.votes.append(coin["value"])
+        if self.features is not None and "features" in coin:
+            self.features.append(coin["features"])
         self.hits += 1
         self.misses = 0
 
@@ -33,14 +43,19 @@ class Stabilizer:
     window:     součet = medián z posledních window snímků
     motion_thr: kolik % pixelů se mezi snímky výrazně změní, aby se součet zmrazil (ruka v záběru)
     settle:     kolik snímků po skončení pohybu ještě počkat
+    max_dd:     mince se spáruje se stopou jen při podobném průměru (hodnoty se liší aspoň o 1,5 mm),
+                takže se po přeskládání rukou nepřevezme hodnota jiné mince
+    classify:   funkce příznaky → hodnota; když je zadaná, hodnota stopy se počítá ze zprůměrovaných příznaků
     """
 
-    def __init__(self, min_hits=3, max_misses=3, window=5, motion_thr=2.0, settle=2):
+    def __init__(self, min_hits=3, max_misses=3, window=5, motion_thr=2.0, settle=2, max_dd=0.8, classify=None):
         self.min_hits = min_hits
         self.max_misses = max_misses
         self.sums = deque(maxlen=window)
         self.motion_thr = motion_thr
         self.settle = settle
+        self.max_dd = max_dd
+        self.classify = classify
         self.calm = 0
         self.tracks = []
         self.next_id = 0
@@ -67,7 +82,8 @@ class Stabilizer:
                 if t.id in used:
                     continue
                 d = np.hypot(t.x - c["x"], t.y - c["y"])
-                if d < 0.5 * max(t.r, c["r"]) and (best_d is None or d < best_d):
+                same_size = abs(t.d - c.get("diameter_mm", t.d)) < self.max_dd
+                if d < 0.5 * max(t.r, c["r"]) and same_size and (best_d is None or d < best_d):
                     best, best_d = t, d
             if best is not None:
                 used.add(best.id)
@@ -88,7 +104,7 @@ class Stabilizer:
                 t.misses += 1
         for track, coin in pairs:
             if track is None:
-                self.tracks.append(Track(self.next_id, coin))
+                self.tracks.append(Track(self.next_id, coin, self.classify))
                 self.next_id += 1
             else:
                 track.update(coin)

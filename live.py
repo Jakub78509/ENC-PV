@@ -85,7 +85,7 @@ def main():
         return
 
     counter = CoinCounter(ROOT / "results" / "05_priznaky.csv", load_calibration(args.calibration))
-    stab = Stabilizer()
+    stab = Stabilizer(classify=counter.classify)
     cap = open_source(args)
     writer, log, fps, frame_no = None, [], 0.0, 0
 

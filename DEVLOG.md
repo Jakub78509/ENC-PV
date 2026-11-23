@@ -53,3 +53,15 @@ Krátký záznam po každém týdnu: co jsme udělali, co nefungovalo a proč.
   zmrazení při pohybu. Simulace (mince → ruka → odebraná 50 Kč): surový součet se změní 15×, stabilní 2×, reakce 0,8 s.
 - Další krok: ověřit na reálném videu z iPhonu (`--log`), případně přeučit na snímcích z videa.
 
+## Týden 4 (23.–29. 11. 2026)
+
+- 4 videa z iPhonu (4K, ruka přidává a odebírá mince) zpracována přes `live.py --source video --log`.
+- Oprava detekce: ruka u okraje snímku zvedla relativní práh watershedu nad poloměr všech mincí (nalezena 1 z 8).
+  Objekty u okraje se vyřazují a práh pro středy mincí je pevný (20 px). Na datasetu beze změny (476/476, test 160/161).
+- Kalibrace: video vychází 4,87 px/mm (dataset 4,876) – stejný telefon a výška, kalibrace není potřeba.
+- Stabilizace: spárování stopy jen s mincí podobného průměru, hodnota ze zprůměrovaných příznaků stopy.
+- Klasifikátor v živém režimu: průměr váží 2× víc než sytost (sytost zlatých mincí ve videu vyšší než na fotkách).
+  Test: mince 99,4 %, EER průměr 2,7 % → 1,4 %, max 9,3 % → 7,1 %; boční světlo 74 % → 85 %.
+  Váha volena podle videí, test byl při tom vidět → ověřit na nové testovací sadě.
+- Výsledek na videích: 19/19 klidných scén správný součet, zpoždění po odchodu ruky medián 0,4 s, max 0,8 s.
+

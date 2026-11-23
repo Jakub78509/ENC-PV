@@ -32,10 +32,13 @@ def segment(v):
     return clean_mask(threshold_hysteresis(v))
 
 
-def split_touching(img_rgb, mask, peak_size=21, min_peak=0.4):
+def split_touching(img_rgb, mask, peak_size=21, min_peak=0.4, min_peak_px=None):
+    # min_peak_px: pevný práh na vzdálenost od okraje; jinak min_peak × maximum ve snímku
+    # (velký objekt, např. ruka, by relativní práh vytáhl nad poloměr všech mincí)
     dist = cv2.distanceTransform(mask, cv2.DIST_L2, 5)
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (peak_size, peak_size))
-    peaks = (dist == cv2.dilate(dist, kernel)) & (dist > min_peak * dist.max())
+    threshold = min_peak_px if min_peak_px is not None else min_peak * dist.max()
+    peaks = (dist == cv2.dilate(dist, kernel)) & (dist > threshold)
     peaks = cv2.dilate(peaks.astype(np.uint8) * 255, np.ones((5, 5), np.uint8))
     _, markers = cv2.connectedComponents(peaks)
     markers = markers + 1
@@ -115,9 +118,20 @@ def segment_bg(img_rgb, thr=50, ksize=7):
     return cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
 
 
-def detect_coins_bg(img_rgb, thr=50):
-    mask = segment_bg(img_rgb, thr)
-    return find_coins(mask, split_touching(img_rgb, mask), min_area=5000, min_circularity=0.75, hull=True)
+def remove_border_blobs(mask):
+    """Vyhodí objekty, které se dotýkají okraje snímku (ruka, mince napůl mimo záběr)."""
+    n, labels = cv2.connectedComponents(mask)
+    border = np.unique(np.concatenate([labels[0], labels[-1], labels[:, 0], labels[:, -1]]))
+    out = mask.copy()
+    out[np.isin(labels, border[border > 0])] = 0
+    return out
+
+
+def detect_coins_bg(img_rgb, thr=50, min_peak_px=20):
+    # min_peak_px = 20: zhruba 0,4 × poloměr 1 Kč (10 mm × 4,876 px/mm ≈ 49 px)
+    mask = remove_border_blobs(segment_bg(img_rgb, thr))
+    labels = split_touching(img_rgb, mask, min_peak_px=min_peak_px)
+    return find_coins(mask, labels, min_area=5000, min_circularity=0.75, hull=True)
 
 
 def draw_coins(img_rgb, coins, color=(0, 255, 0)):

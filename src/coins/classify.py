@@ -11,14 +11,19 @@ class NearestNeighborScores:
     změnou prahu na tomto skóre se v kroku 06 počítá ROC a EER.
     """
 
-    def __init__(self, k=1):
+    def __init__(self, k=1, weights=None):
+        # weights: váha každého příznaku po standardizaci (např. (2, 1) = průměr v mm váží 2× víc
+        # než sytost, protože velikost se mezi kamerami nemění, barva ano)
         self.k = k
+        self.weights = weights
 
     def fit(self, X, y):
         X = np.asarray(X, dtype=float)
         y = np.asarray(y)
         self.mean_ = X.mean(axis=0)
         self.std_ = X.std(axis=0) + 1e-9
+        if self.weights is not None:
+            self.std_ = self.std_ / np.asarray(self.weights, dtype=float)
         self.classes_ = np.unique(y)
         self.X_ = (X - self.mean_) / self.std_
         self.y_ = y

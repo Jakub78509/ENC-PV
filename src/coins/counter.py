@@ -20,12 +20,13 @@ from coins.segment import detect_coins_bg
 DATASET_PX_PER_MM = 4.876
 TRAIN_SETS = ["samostatne", "mix", "dotyk"]
 FEATURES = ["prumer_mm", "S_stred"]
+WEIGHTS = (2, 1)  # průměr váží 2× víc než sytost (sytost se mění se světlem a kamerou)
 
 
-def train_model(features_csv, k=3):
+def train_model(features_csv, k=3, weights=WEIGHTS):
     T = pd.read_csv(features_csv)
     T = T[T.sada.isin(TRAIN_SETS) & T.hodnota.notna()]
-    return NearestNeighborScores(k).fit(T[FEATURES], T.hodnota.astype(int))
+    return NearestNeighborScores(k, weights).fit(T[FEATURES], T.hodnota.astype(int))
 
 
 def load_calibration(path):
@@ -69,7 +70,12 @@ class CoinCounter:
         values = self.model.predict(X[FEATURES])
         scores = self.model.decision_function(X[FEATURES])
         out = []
-        for coin, value, score, d in zip(coins, values, scores, X.prumer_mm):
+        for coin, value, score, feats in zip(coins, values, scores, X[FEATURES].values):
             out.append({"x": coin["x"] / s, "y": coin["y"] / s, "r": coin["r"] / s,
-                        "value": int(value), "score": float(score.max()), "diameter_mm": float(d)})
+                        "value": int(value), "score": float(score.max()),
+                        "diameter_mm": float(feats[0]), "features": feats})
         return out
+
+    def classify(self, features):
+        """Hodnota pro jeden vektor příznaků (průměr, sytost) – pro zprůměrované příznaky stopy."""
+        return int(self.model.predict(pd.DataFrame([features], columns=FEATURES))[0])
