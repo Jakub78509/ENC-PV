@@ -1,0 +1,25 @@
+=== po 23. listopadu 2026 14:07:41 CET ===
+Kamery podle macOS:
+Camera:
+
+    Kamera zařízení MacBook Air:
+
+      Model ID: Kamera zařízení MacBook Air
+      Unique ID: 6C707041-05AC-0010-000C-000000000001
+
+    Kamera zařízení Jakub - iPhone:
+
+      Model ID: iPhone18,1
+      Unique ID: 5FA8E5E4-EC07-4207-A57B-C7BE00000001
+
+Kamery, které vidí Python (OpenCV):
+OpenCV: out device of bound (0-1): 2
+OpenCV: camera failed to properly initialize!
+[ WARN:0@2.223] global cap_ffmpeg_impl.hpp:1217 open VIDEOIO/FFMPEG: Failed list devices for backend avfoundation
+OpenCV: out device of bound (0-1): 3
+OpenCV: camera failed to properly initialize!
+OpenCV: out device of bound (0-1): 4
+OpenCV: camera failed to properly initialize!
+kamera 0: 1920×1080
+kamera 1: 1920×1080
+OpenCV 4.13.0 | macOS 27.2.1 | Python 3.13.13
